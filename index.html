@@ -1,0 +1,1959 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>后端开发者前端任务培训课程</title>
+  <style>
+    :root {
+      --bg: #f7f9fc;
+      --surface: #fff;
+      --soft: #edf5f7;
+      --soft-2: #e4edf1;
+      --text: #17212b;
+      --muted: #5d6b78;
+      --muted-2: #7a8793;
+      --border: #dbe5eb;
+      --primary: #176b87;
+      --primary-dark: #0f546d;
+      --green: #3f8f72;
+      --code-bg: #111827;
+      --code-fg: #e7edf5;
+      --shadow: 0 18px 48px rgba(20, 45, 70, .1);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.65;
+      letter-spacing: 0;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 0 22px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(16px);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: var(--text);
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+    .brand-title { display: block; font-size: 15px; font-weight: 780; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .brand-sub { display: block; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .actions { display: flex; align-items: center; gap: 10px; }
+    .icon-btn, .search-btn, .primary-btn, .ghost-btn {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: background .18s ease, border-color .18s ease, transform .18s ease;
+    }
+    .icon-btn { width: 38px; height: 38px; display: inline-grid; place-items: center; }
+    .search-btn { height: 38px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; color: var(--muted); }
+    .icon-btn:hover, .search-btn:hover, .ghost-btn:hover { background: var(--soft); border-color: #c9d6dc; }
+    .kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 21px;
+      padding: 0 6px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #f9fbfc;
+      color: var(--muted-2);
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      line-height: 1;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 296px minmax(0, 1fr);
+      min-height: calc(100vh - 64px);
+    }
+    .sidebar {
+      position: sticky;
+      top: 64px;
+      height: calc(100vh - 64px);
+      overflow: auto;
+      border-right: 1px solid var(--border);
+      background: #f0f5f7;
+      padding: 18px 14px 28px;
+    }
+    .nav-title {
+      margin: 14px 10px 8px;
+      color: var(--muted-2);
+      font-size: 12px;
+      font-weight: 760;
+      text-transform: uppercase;
+    }
+    .nav-link {
+      display: grid;
+      grid-template-columns: 30px minmax(0,1fr) 18px;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      color: var(--muted);
+      transition: background .18s ease, color .18s ease;
+    }
+    .nav-link:hover { background: rgba(255,255,255,.78); color: var(--text); }
+    .nav-link.active { background: var(--primary); color: #fff; }
+    .nav-index {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: rgba(23,107,135,.1);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .active .nav-index { background: rgba(255,255,255,.18); color: #fff; }
+    .nav-name, .nav-desc { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .nav-name { font-size: 14px; font-weight: 740; line-height: 1.25; }
+    .nav-desc { margin-top: 3px; font-size: 12px; opacity: .76; }
+    .nav-link.done .nav-check { color: var(--green); }
+    .nav-link.active.done .nav-check { color: #fff; }
+    .main { min-width: 0; padding: 34px clamp(18px,4vw,52px) 56px; }
+    .content { max-width: 1060px; margin: 0 auto; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0,1.14fr) 360px;
+      gap: 30px;
+      align-items: center;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .eyebrow { color: var(--primary); font-size: 13px; font-weight: 850; margin-bottom: 10px; }
+    h1 { margin: 0; font-size: clamp(30px,4.4vw,52px); line-height: 1.08; letter-spacing: 0; }
+    .hero p { margin: 18px 0 0; max-width: 720px; color: var(--muted); font-size: 17px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .visual {
+      min-height: 260px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .visual svg { width: 100%; display: block; }
+    .section-title { margin: 36px 0 16px; font-size: 24px; line-height: 1.25; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; }
+    .stack, .lesson-card, .principle, .article, .tool-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+    .stack { min-height: 94px; padding: 14px; }
+    .stack small { display: block; color: var(--muted-2); font-size: 12px; font-weight: 760; }
+    .stack strong { display: block; margin-top: 6px; font-size: 15px; line-height: 1.4; }
+    .lesson-list { display: grid; gap: 12px; }
+    .lesson-card {
+      display: grid;
+      grid-template-columns: 54px minmax(0,1fr) auto;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    .lesson-card:hover { border-color: rgba(23,107,135,.46); box-shadow: 0 12px 30px rgba(20,45,70,.08); transform: translateY(-1px); }
+    .lesson-no {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--primary);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 850;
+    }
+    .lesson-card h3 { margin: 0; font-size: 17px; line-height: 1.3; }
+    .lesson-card p { margin: 5px 0 0; color: var(--muted); font-size: 14px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: rgba(23,107,135,.09);
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 720;
+    }
+    .principles { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+    .principle { padding: 15px; display: flex; gap: 12px; align-items: flex-start; }
+    .check {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--green);
+      color: #fff;
+      flex: 0 0 auto;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .principle strong { display: block; font-size: 15px; }
+    .principle span:last-child { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
+    .lesson-layout { display: grid; grid-template-columns: minmax(0,1fr) 242px; gap: 30px; align-items: start; }
+    .article { min-width: 0; padding: clamp(20px,3vw,34px); box-shadow: 0 16px 36px rgba(20,45,70,.05); }
+    .article-head { padding-bottom: 20px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
+    .kicker { color: var(--primary); font-size: 13px; font-weight: 850; }
+    .article h1 { margin-top: 8px; font-size: clamp(28px,3vw,42px); }
+    .article-desc { margin: 10px 0 0; color: var(--muted); }
+    .article h2 { margin: 34px 0 14px; font-size: 24px; line-height: 1.3; }
+    .article h3 { margin: 28px 0 12px; font-size: 19px; line-height: 1.35; }
+    .article h4 { margin: 22px 0 8px; font-size: 16px; }
+    .article p { margin: 12px 0; color: #263443; }
+    .article ul, .article ol { margin: 12px 0; padding-left: 24px; }
+    .article li { margin: 5px 0; }
+    .article a { color: var(--primary-dark); text-decoration: underline; text-underline-offset: 3px; }
+    .article blockquote { margin: 18px 0; padding: 14px 16px; border-left: 4px solid var(--primary); background: var(--soft); border-radius: 0 8px 8px 0; color: var(--muted); }
+    .article hr { border: 0; border-top: 1px solid var(--border); margin: 28px 0; }
+    .article code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #eef2f5;
+      color: var(--primary-dark);
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      font-size: .92em;
+    }
+    .article pre { margin: 16px 0; overflow: auto; border-radius: 8px; background: var(--code-bg); color: var(--code-fg); padding: 16px; border: 1px solid #1f2937; }
+    .article pre code { padding: 0; background: transparent; color: inherit; font-size: 13px; line-height: 1.62; }
+    .article table { width: 100%; border-collapse: collapse; margin: 18px 0; border-radius: 8px; font-size: 14px; }
+    .article th, .article td { border: 1px solid var(--border); padding: 10px 12px; vertical-align: top; text-align: left; }
+    .article th { background: var(--soft); font-weight: 760; }
+    .article tr:nth-child(even) td { background: #fbfdfe; }
+    .tools { position: sticky; top: 88px; display: grid; gap: 12px; }
+    .tool-card { padding: 14px; }
+    .tool-card h3 { margin: 0 0 10px; font-size: 15px; }
+    .progress { height: 8px; border-radius: 999px; background: var(--soft-2); overflow: hidden; }
+    .progress i { display: block; height: 100%; width: 0; background: var(--green); }
+    .progress-text { margin-top: 8px; color: var(--muted); font-size: 13px; }
+    .toc { display: grid; gap: 6px; }
+    .toc a { display: block; padding: 7px 8px; border-radius: 7px; color: var(--muted); font-size: 13px; line-height: 1.35; }
+    .toc a:hover { background: var(--soft); color: var(--text); }
+    .lesson-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+    .primary-btn, .ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 0 14px;
+      font-weight: 760;
+    }
+    .primary-btn { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .primary-btn:hover { background: var(--primary-dark); }
+    .ghost-btn { color: var(--muted); }
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 45;
+      display: none;
+      background: rgba(10,20,30,.38);
+    }
+    .backdrop.open { display: block; }
+    .search-modal {
+      position: fixed;
+      z-index: 50;
+      top: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      width: min(720px, calc(100vw - 28px));
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: 0 28px 80px rgba(12,30,46,.22);
+      overflow: hidden;
+    }
+    .search-modal.open { display: block; }
+    .search-input { display: flex; align-items: center; gap: 10px; padding: 14px; border-bottom: 1px solid var(--border); }
+    .search-input input { flex: 1; min-width: 0; border: 0; outline: 0; font-size: 16px; }
+    .results { max-height: min(560px, calc(100vh - 180px)); overflow: auto; padding: 8px; }
+    .result { display: block; padding: 12px; border-radius: 8px; cursor: pointer; }
+    .result:hover { background: var(--soft); }
+    .result strong { display: block; }
+    .result span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .empty { color: var(--muted); padding: 22px; text-align: center; }
+    .mobile-only { display: none; }
+    @media (max-width: 1060px) {
+      .hero { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .lesson-layout { grid-template-columns: 1fr; }
+      .tools { position: static; grid-template-columns: repeat(2,minmax(0,1fr)); }
+    }
+    @media (max-width: 760px) {
+      .mobile-only { display: inline-grid; }
+      .topbar { height: 58px; padding: 0 12px; }
+      .brand-sub, .search-btn .label, .search-btn .kbd { display: none; }
+      .layout { display: block; }
+      .sidebar {
+        position: fixed;
+        top: 58px;
+        left: 0;
+        z-index: 46;
+        width: min(310px,86vw);
+        height: calc(100vh - 58px);
+        transform: translateX(-105%);
+        transition: transform .22s ease;
+        box-shadow: 18px 0 48px rgba(15,35,50,.18);
+      }
+      .sidebar.open { transform: translateX(0); }
+      .main { padding: 22px 14px 40px; }
+      .hero p { font-size: 15px; }
+      .grid-4, .principles, .tools { grid-template-columns: 1fr; }
+      .lesson-card { grid-template-columns: 44px minmax(0,1fr); }
+      .lesson-no { width: 42px; height: 42px; font-size: 16px; }
+      .arrow { display: none; }
+      .article { padding: 18px 14px; }
+      .article table { display: block; overflow-x: auto; white-space: nowrap; }
+      .lesson-footer { flex-direction: column; align-items: stretch; }
+      .primary-btn, .ghost-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <button class="icon-btn mobile-only" id="menuBtn" type="button" aria-label="打开目录">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <a class="brand" href="#/overview" aria-label="课程总览">
+        <span class="logo" aria-hidden="true">
+          <svg width="25" height="25" viewBox="0 0 32 32" fill="none"><path d="M10 12 6 16l4 4" stroke="#9ee2d0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="m22 12 4 4-4 4" stroke="#9ee2d0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="m17 8-4 16" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </span>
+        <span style="min-width:0">
+          <span class="brand-title">后端开发者前端任务培训</span>
+          <span class="brand-sub">借助大模型完成前端开发任务</span>
+        </span>
+      </a>
+    </div>
+    <div class="actions">
+      <button class="search-btn" id="searchBtn" type="button" title="搜索课程">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="label">搜索课程</span>
+        <span class="kbd">Ctrl K</span>
+      </button>
+      <button class="icon-btn" id="resetBtn" type="button" title="重置进度" aria-label="重置进度">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 1 0 2.34-5.66L4 8.68" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4v4.68h4.68" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar"><nav id="nav"></nav></aside>
+    <main class="main"><div class="content" id="app"></div></main>
+  </div>
+
+  <div class="backdrop" id="backdrop"></div>
+  <section class="search-modal" id="searchModal" role="dialog" aria-modal="true" aria-label="搜索课程">
+    <div class="search-input">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="searchInput" type="search" placeholder="搜索章节、任务、提示词、命令..." autocomplete="off">
+      <span class="kbd">Esc</span>
+    </div>
+    <div class="results" id="results"></div>
+  </section>
+
+  <textarea id="courseMd" hidden># 后端开发者前端任务培训指南
+
+&gt; 面向“不了解前端，但需要借助大模型完成前端任务”的后端开发同学。
+&gt;
+&gt; 目标不是把后端同学短时间训练成前端专家，而是让大家掌握一套可复制的交付流程：看懂任务、定位页面、理解数据流、正确使用 AI、改出最小可验证代码，并完成自测。
+
+## 目录
+
+- [培训目标](#培训目标)
+- [后端同学的前端心智模型](#后端同学的前端心智模型)
+- [项目概述](#项目概述)
+- [环境准备](#环境准备)
+- [项目启动](#项目启动)
+- [核心技术栈](#核心技术栈)
+- [目录结构](#目录结构)
+- [拿到前端任务后怎么做](#拿到前端任务后怎么做)
+- [如何让大模型帮你写前端](#如何让大模型帮你写前端)
+- [典型前端任务处理方法](#典型前端任务处理方法)
+- [常见问题定位](#常见问题定位)
+- [自测与验收清单](#自测与验收清单)
+- [Git 提交规范](#git-提交规范)
+- [快速参考](#快速参考)
+- [学习资源](#学习资源)
+
+---
+
+## 培训目标
+
+完成培训后，后端同学应该具备以下能力：
+
+1. 能根据需求判断“要改哪个页面、哪个组件、哪个接口、哪个状态”。
+2. 能使用搜索、浏览器开发者工具和 AI 定位前端问题。
+3. 能让 AI 读懂项目上下文，而不是只让 AI 凭空生成代码。
+4. 能完成常见前端任务：加字段、加查询条件、加按钮、接接口、修复报错、调整样式、加弹窗、加表单校验。
+5. 能做基础自测：页面是否正常、接口是否正确、控制台是否报错、边界场景是否覆盖。
+
+建议建立一个基本原则：
+
+&gt; 前端任务不是“随便改一个页面”，而是“UI、数据、状态、事件、接口、权限、路由共同协作”。后端同学可以不熟悉前端细节，但必须学会把任务拆成这些部分，再让 AI 帮忙处理。
+
+---
+
+## 后端同学的前端心智模型
+
+### 1. 用后端概念类比前端
+
+| 后端概念 | 前端对应概念 | 说明 |
+|---|---|---|
+| Controller | 页面组件、路由页面 | 接收用户操作，组织业务流程 |
+| DTO / VO | 页面 data、接口入参、表格行数据 | 页面展示和接口传输的数据结构 |
+| Service 方法 | methods、utils、api 函数 | 处理交互逻辑和接口调用 |
+| Mapper / API Client | `src/api/*` | 封装 HTTP 请求 |
+| 全局缓存 / Session | Vuex store | 跨页面共享状态 |
+| URL 路由 | Vue Router | 页面跳转和参数传递 |
+| 权限拦截 | 路由守卫、按钮权限、菜单配置 | 控制用户能否访问页面或操作 |
+| 模板引擎 | Vue template | 根据数据渲染页面 |
+| 单元测试 / 接口测试 | 浏览器自测、Console、Network、构建检查 | 验证前端是否正常 |
+
+### 2. 一个 Vue 页面通常由三部分组成
+
+```vue
+&lt;template&gt;
+  &lt;!-- 页面结构：按钮、表格、表单、弹窗 --&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  data() {
+    return {
+      // 页面状态：查询条件、表格数据、loading、弹窗开关
+    }
+  },
+  methods: {
+    // 页面行为：查询、保存、删除、打开弹窗、调用接口
+  }
+}
+&lt;/script&gt;
+
+&lt;style scoped&gt;
+/* 当前页面样式 */
+&lt;/style&gt;
+```
+
+后端同学只要记住：
+
+- `template` 看“页面长什么样”。
+- `data` 看“页面当前有哪些状态”。
+- `methods` 看“点击按钮、查询数据、保存表单时做什么”。
+- `api` 文件看“前端怎么调用后端接口”。
+
+### 3. 前端任务的四个核心问题
+
+每次改代码前先问自己四个问题：
+
+1. **改哪里**：哪个子应用、哪个页面、哪个组件？
+2. **改什么数据**：字段来自接口、页面计算，还是固定枚举？
+3. **怎么触发**：页面加载触发、按钮点击触发、表单变化触发，还是路由进入触发？
+4. **怎么验证**：看页面、看 Network、看 Console、看构建结果，还是看联调数据？
+
+---
+
+## 项目概述
+
+### 什么是这个项目？
+
+智医助理 5.0 HIS（医院信息系统）前端项目，是一个基于 **微前端架构** 的医疗信息管理系统。
+
+### 核心特点
+
+- **微前端架构**：多个子应用独立开发、独立部署。
+- **Monorepo 管理**：使用 pnpm workspace 统一管理多个子应用。
+- **技术栈**：Vue 2.6 + Vue Router + Vuex + Webpack 5。
+- **UI 组件库**：`@imfe/ui`，基于 ElementUI 二次封装。
+
+### 子应用列表
+
+| 子应用名称 | 目录 | 功能说明 |
+|---|---|---|
+| 门诊应用 | `packages/outpatient-app` | 门诊业务：挂号、收费、药房等 |
+| 医院应用 | `packages/haic-spa-hospital` | 住院业务管理 |
+| 医保应用 | `packages/haic-spa-medical-insurance` | 医保结算相关 |
+| IMS 应用 | `packages/haic-spa-ims` | 库存管理系统 |
+| 设置应用 | `packages/haic-spa-settings` | 系统设置 |
+| 通用组件 | `packages/common-components` | 跨应用共享组件 |
+| 通用工具 | `packages/common-utils` | 跨应用共享工具函数 |
+
+---
+
+## 环境准备
+
+### 1. 安装 NVM
+
+项目依赖 Node 14.x。建议使用 NVM 管理 Node 版本，避免本机其他项目和当前项目互相影响。
+
+```bash
+nvm version
+```
+
+### 2. 安装 Node 14.x
+
+```bash
+nvm install 14
+nvm use 14
+node -v
+```
+
+确认输出为 `v14.x.x`。
+
+### 3. 安装 pnpm 7.x
+
+```bash
+npm install pnpm@7 -g
+pnpm -v
+```
+
+确认输出为 `7.x.x`。
+
+### 4. 推荐安装工具
+
+- VS Code / Cursor：用于打开项目和使用 AI 辅助开发。
+- 浏览器开发者工具：Chrome 或 Edge 均可，重点使用 Console、Network、Elements。
+- ripgrep：命令行搜索工具，命令是 `rg`，比 `grep` 更适合大项目搜索。
+
+---
+
+## 项目启动
+
+### 1. 进入项目根目录并安装依赖
+
+```bash
+cd D:\project\medical_care\HAIC_WEB_HIS
+pnpm install
+```
+
+### 2. 启动项目
+
+启动所有子应用：
+
+```bash
+pnpm run serve
+```
+
+访问地址：`http://localhost:6066/`
+
+启动单个子应用，开发时更推荐：
+
+```bash
+# 门诊应用
+pnpm run serve-outpatient
+
+# 医院应用
+pnpm run serve:hospital
+
+# 医保应用
+pnpm run serve:medical
+
+# IMS 应用
+pnpm run serve:ims
+
+# 设置应用
+pnpm run serve:settings
+```
+
+### 3. 构建项目
+
+```bash
+pnpm run build
+pnpm run build:outpatient
+pnpm run build:hospital
+```
+
+---
+
+## 核心技术栈
+
+### 前端框架
+
+| 技术 | 版本 | 后端同学需要知道什么 |
+|---|---|---|
+| Vue.js | 2.6.14 | 页面组件写在 `.vue` 文件里，包含 template、script、style |
+| Vue Router | 3.5.1 | 管理页面路径、菜单跳转、路由参数 |
+| Vuex | 3.6.2 | 管理跨页面共享状态，类似前端全局状态容器 |
+
+### UI 组件库
+
+| 组件库 | 说明 |
+|---|---|
+| `@imfe/ui` | 基于 ElementUI 二次封装，项目主要 UI 库 |
+| `vxe-table` | 高性能表格组件，常用于复杂列表 |
+
+重要提示：
+
+- 页面上看到的 `el-button`、`el-input`、`el-table` 等组件，实际使用的是项目封装后的组件体系。
+- 业务组件常见前缀是 `ima-` 或 `haic-`。
+- 优先复制项目已有页面的写法，不要让 AI 引入新的 UI 库。
+
+### 常用工具库
+
+| 工具 | 用途 |
+|---|---|
+| axios | HTTP 请求 |
+| moment.js | 日期时间处理 |
+| lodash | 通用工具函数 |
+| bignumber.js | 高精度金额、数量计算 |
+
+金额、医保、收费相关逻辑要特别谨慎，不要用普通浮点数随意计算。
+
+---
+
+## 目录结构
+
+### 根目录结构
+
+```text
+HAIC_WEB_HIS/
+├── packages/                         # 所有子应用和共享模块
+│   ├── outpatient-app/                # 门诊应用
+│   ├── haic-spa-hospital/             # 医院应用
+│   ├── haic-spa-medical-insurance/    # 医保应用
+│   ├── haic-spa-ims/                  # IMS 应用
+│   ├── haic-spa-settings/             # 设置应用
+│   ├── common-components/             # 共享组件
+│   └── common-utils/                  # 共享工具
+├── .cursor/                           # AI 辅助开发配置
+│   └── rules/                         # 项目规范文档
+├── package.json
+├── pnpm-workspace.yaml
+└── README.md
+```
+
+### 单个子应用结构
+
+以门诊应用为例：
+
+```text
+packages/outpatient-app/
+├── src/
+│   ├── api/                    # API 接口定义
+│   ├── assets/                 # 静态资源
+│   ├── components/             # 组件
+│   ├── config/                 # 配置、常量
+│   ├── router/                 # 路由配置
+│   ├── store/                  # Vuex 状态管理
+│   ├── styles/                 # 样式文件
+│   ├── utils/                  # 工具函数
+│   ├── views/                  # 页面组件
+│   ├── axios/                  # Axios 配置
+│   ├── App.vue
+│   └── main.js
+├── public/
+├── vue.config.js
+└── package.json
+```
+
+### 后端同学优先关注的目录
+
+| 目录 | 什么时候看 |
+|---|---|
+| `src/views/` | 找页面、改页面、查按钮点击逻辑 |
+| `src/components/` | 页面拆成子组件时，查具体组件逻辑 |
+| `src/api/` | 查接口封装、接口路径、请求方法 |
+| `src/router/` | 查页面路由、页面路径、路由参数 |
+| `src/store/` | 页面数据来自全局状态时查看 |
+| `src/config/` | 查枚举、接口前缀、常量 |
+| `common-components/` | 多页面共用组件，修改时要特别谨慎 |
+| `common-utils/` | 多页面共用工具函数，修改时要特别谨慎 |
+
+---
+
+## 拿到前端任务后怎么做
+
+### 总流程
+
+```text
+读需求
+  -&gt; 判断任务类型
+  -&gt; 定位页面和文件
+  -&gt; 梳理数据来源
+  -&gt; 让 AI 先分析方案
+  -&gt; 小步修改代码
+  -&gt; 浏览器自测
+  -&gt; 让 AI 做代码评审
+  -&gt; 提交
+```
+
+### 第一步：把需求翻译成前端任务
+
+需求通常不会直接告诉你要改哪个文件。你需要先把业务语言翻译成前端修改点。
+
+| 需求描述 | 前端修改点 |
+|---|---|
+| 列表新增“患者年龄”列 | 表格列、接口返回字段、格式化展示 |
+| 查询区增加“身份证号”条件 | 查询表单、query 参数、接口入参、重置逻辑 |
+| 点击“作废”调用新接口 | 按钮、点击事件、确认弹窗、API 封装、成功后刷新列表 |
+| 保存时增加必填校验 | 表单 rules、保存前 validate、错误提示 |
+| 页面打开时报错 | 生命周期、接口调用、空值处理、组件注册 |
+| 页面样式错位 | DOM 结构、CSS 选择器、组件属性、布局容器 |
+| 新增菜单页面 | 路由配置、菜单配置、页面组件、权限码 |
+
+### 第二步：定位页面
+
+优先使用页面上能看到的文字搜索，例如按钮文案、表格列名、页面标题、菜单名称。
+
+```bash
+# 推荐：使用 rg 搜索页面文字
+rg &quot;挂号&quot; packages/*/src/views
+rg &quot;患者姓名&quot; packages/*/src
+rg &quot;作废&quot; packages/*/src
+```
+
+如果没有 `rg`，可以使用：
+
+```bash
+grep -r &quot;挂号&quot; packages/*/src/views
+```
+
+定位技巧：
+
+- 搜页面标题，通常能找到具体 `.vue` 页面。
+- 搜按钮文案，通常能找到点击事件附近的代码。
+- 搜接口 URL 的一段路径，通常能找到 `src/api` 里的接口封装。
+- 搜字段名，通常能找到表格列、表单项、接口参数。
+- 搜路由 path，通常能找到 router 配置和页面组件路径。
+
+### 第三步：梳理数据流
+
+前端数据流通常是：
+
+```text
+页面条件
+  -&gt; methods 组装参数
+  -&gt; src/api 调接口
+  -&gt; 接口返回数据
+  -&gt; 赋值给 data
+  -&gt; template 渲染表格/表单/详情
+```
+
+拿到任务后，按这几个点问 AI：
+
+```text
+请帮我阅读当前页面，梳理这个页面的数据流：
+1. 页面初始化时调用了哪些接口？
+2. 查询按钮触发哪个方法？
+3. 查询参数在哪里组装？
+4. 表格数据字段在哪里渲染？
+5. 修改这个字段可能影响哪些地方？
+```
+
+### 第四步：先让 AI 分析，不要直接让 AI 改
+
+推荐先问：
+
+```text
+你先不要改代码。
+请先帮我定位这个需求涉及的文件、方法、接口和修改点。
+需求是：在门诊挂号列表新增“患者年龄”列，字段由接口返回的 age 提供。
+请输出：
+1. 相关文件
+2. 需要修改的位置
+3. 可能的风险
+4. 自测步骤
+```
+
+这样做的好处是：你可以先确认 AI 找的位置对不对，再让它小范围修改。
+
+### 第五步：小步修改
+
+不要一次让 AI “完成整个功能”。更稳的方式是：
+
+1. 先定位文件和方案。
+2. 再只改页面展示。
+3. 再接接口参数。
+4. 再补 loading、错误提示、空值处理。
+5. 最后让 AI review diff。
+
+---
+
+## 如何让大模型帮你写前端
+
+### 1. 推荐使用方式
+
+优先使用能读取项目代码的 AI 编程工具，例如 Cursor、Claude Code、GitHub Copilot 类工具。它们能直接搜索代码、理解上下文、修改文件、查看 diff，比单纯把代码复制到聊天窗口更适合真实项目。
+
+如果只能使用普通 ChatGPT / Claude 对话，也可以完成任务，但你需要手动提供更多上下文。
+
+### 2. 给 AI 的上下文包
+
+每次提问尽量包含这 7 项：
+
+```text
+项目背景：
+这是 Vue 2.6 项目，使用 @imfe/ui，Monorepo + 微前端架构。
+
+任务目标：
+我要在门诊挂号列表新增“患者年龄”列。
+
+业务规则：
+字段来自接口返回的 age，空值显示为 --。
+
+已知位置：
+页面可能在 packages/outpatient-app/src/views/his/opt-register 下。
+
+限制条件：
+不要引入新依赖，不要改公共组件，不要大范围重构，优先复用已有写法。
+
+期望输出：
+先帮我分析涉及文件和修改点，不要直接改代码。
+
+验收方式：
+页面显示新列，查询后有值，控制台无报错，Network 请求参数不变。
+```
+
+### 3. 好问题和坏问题
+
+坏问题：
+
+```text
+帮我改一下这个前端需求。
+```
+
+好问题：
+
+```text
+需求：在门诊收费列表增加“收费员”查询条件，并作为 cashierName 传给列表查询接口。
+请先阅读相关页面和 API 封装，告诉我需要修改哪些文件。
+限制：不要改公共组件，不要改变原有查询参数，不要引入新依赖。
+然后给出最小修改方案和自测步骤。
+```
+
+### 4. 常用提示词模板
+
+#### 定位页面
+
+```text
+请帮我定位“[页面名称/按钮文案/表格列名]”所在的前端文件。
+请优先搜索 packages 下的 src/views、src/components、src/router。
+找到后请告诉我：
+1. 页面入口文件
+2. 相关子组件
+3. 查询接口文件
+4. 按钮或表格列对应的方法
+```
+
+#### 分析报错
+
+```text
+浏览器 Console 报错如下：
+[粘贴完整错误]
+
+Network 中失败接口如下：
+URL: [接口地址]
+Method: [GET/POST]
+Request Payload: [请求参数]
+Response: [响应内容]
+
+请帮我判断这是前端问题、接口问题、数据问题，还是配置问题。
+请给出排查顺序和最小修复建议。
+```
+
+#### 修改页面
+
+```text
+请基于现有代码风格实现这个需求：
+[需求描述]
+
+要求：
+1. 只修改必要文件。
+2. 不要引入新依赖。
+3. 保持现有 UI 组件写法。
+4. 对空值做兼容。
+5. 修改完成后列出自测步骤。
+```
+
+#### 接口联调
+
+```text
+我要接入一个新接口：
+接口路径：[path]
+方法：[GET/POST]
+请求参数：[params]
+响应结构：[response]
+
+请帮我：
+1. 找到当前模块 API 文件。
+2. 按项目现有 request 封装新增 API 方法。
+3. 在页面方法中调用。
+4. 加 loading、错误提示、成功后刷新。
+5. 不要改变已有接口行为。
+```
+
+#### 代码评审
+
+```text
+请 review 我当前的改动，重点检查：
+1. 是否会影响公共组件或其他页面。
+2. 是否有空值、异步、loading、重复点击问题。
+3. 接口参数是否和后端约定一致。
+4. 是否符合项目已有代码风格。
+5. 是否有必要补充自测点。
+```
+
+### 5. AI 输出后必须人工确认的点
+
+AI 生成代码后，后端同学至少要检查这些内容：
+
+- 文件路径是否正确，不要改错子应用。
+- 接口字段名是否和后端真实字段一致。
+- 请求方法、路径、参数结构是否正确。
+- 是否引入了项目不存在的库。
+- 是否改了公共组件、公共工具、全局样式。
+- 是否删除了原有业务逻辑。
+- 是否处理了空值、接口失败、loading 状态。
+- 是否有明显的拼写错误、变量未定义、组件未注册。
+
+---
+
+## 典型前端任务处理方法
+
+### 任务 1：列表新增一列
+
+常见需求：
+
+```text
+在挂号列表增加“患者年龄”列，字段为 age。
+```
+
+处理步骤：
+
+1. 搜索页面标题或已有列名。
+2. 找到表格组件，通常是 `el-table-column` 或 `vxe-column`。
+3. 确认接口返回里是否已有字段。
+4. 新增列，处理空值。
+5. 自测列表加载和查询。
+
+示例：
+
+```vue
+&lt;el-table-column
+  prop=&quot;age&quot;
+  label=&quot;患者年龄&quot;
+  min-width=&quot;100&quot;
+&gt;
+  &lt;template slot-scope=&quot;{ row }&quot;&gt;
+    {{ row.age || &#39;--&#39; }}
+  &lt;/template&gt;
+&lt;/el-table-column&gt;
+```
+
+给 AI 的提示词：
+
+```text
+请在当前列表页面新增“患者年龄”列，字段名 age。
+要求空值显示 --，列宽参考相邻列。
+请先找到表格代码，再按现有 el-table-column 或 vxe-column 风格修改。
+```
+
+### 任务 2：查询区新增查询条件
+
+常见需求：
+
+```text
+在收费列表查询区增加“身份证号”输入框，并作为 idCardNo 传给查询接口。
+```
+
+处理步骤：
+
+1. 找到查询表单位置。
+2. 在 `data` 中找到查询参数对象，例如 `queryParams`、`searchForm`、`formInline`。
+3. 新增字段默认值。
+4. 在 template 中新增输入框。
+5. 检查查询方法是否直接传整个查询对象。如果不是，需要补充参数组装。
+6. 检查重置方法是否要清空新字段。
+
+示例：
+
+```vue
+&lt;el-form-item label=&quot;身份证号&quot;&gt;
+  &lt;el-input
+    v-model=&quot;queryParams.idCardNo&quot;
+    clearable
+    placeholder=&quot;请输入身份证号&quot;
+  /&gt;
+&lt;/el-form-item&gt;
+```
+
+```javascript
+data() {
+  return {
+    queryParams: {
+      patientName: &#39;&#39;,
+      idCardNo: &#39;&#39;
+    }
+  }
+}
+```
+
+给 AI 的提示词：
+
+```text
+请给收费列表新增查询条件“身份证号”，字段名 idCardNo。
+请检查查询参数对象、查询方法和重置方法，确保点击查询时会传给列表接口，点击重置时会清空。
+不要改变已有查询字段。
+```
+
+### 任务 3：新增按钮并调用接口
+
+常见需求：
+
+```text
+在列表操作列增加“作废”按钮，点击后调用作废接口，成功后刷新列表。
+```
+
+处理步骤：
+
+1. 找到操作列。
+2. 确认按钮权限写法是否已有同类示例。
+3. 在 `src/api` 增加接口封装，或复用已有接口。
+4. 在页面 methods 增加点击方法。
+5. 加确认弹窗，避免误操作。
+6. 加 loading 或禁用状态，避免重复点击。
+7. 成功后提示并刷新列表。
+
+示例：
+
+```vue
+&lt;el-button
+  type=&quot;text&quot;
+  size=&quot;small&quot;
+  @click=&quot;handleVoid(row)&quot;
+&gt;
+  作废
+&lt;/el-button&gt;
+```
+
+```javascript
+async handleVoid(row) {
+  try {
+    await this.$confirm(&#39;确认作废当前记录吗？&#39;, &#39;提示&#39;, { type: &#39;warning&#39; })
+    await voidRegister({ id: row.id })
+    this.$message.success(&#39;作废成功&#39;)
+    this.fetchData()
+  } catch (error) {
+    if (error !== &#39;cancel&#39;) {
+      this.$message.error(error.message || &#39;作废失败&#39;)
+    }
+  }
+}
+```
+
+给 AI 的提示词：
+
+```text
+请在当前列表操作列新增“作废”按钮。
+点击后需要二次确认，确认后调用接口 voidRegister，参数是当前行 id。
+成功后提示并刷新列表，失败后展示错误提示。
+请参考页面里已有操作按钮的权限和样式写法。
+```
+
+### 任务 4：新增弹窗表单
+
+常见需求：
+
+```text
+点击“新增”打开弹窗，填写信息后保存。
+```
+
+处理步骤：
+
+1. 在 data 中增加弹窗开关，例如 `dialogVisible`。
+2. 增加表单对象，例如 `formData`。
+3. 增加校验规则 `rules`。
+4. 新增打开弹窗方法，初始化表单。
+5. 新增保存方法，先 validate，再调用接口。
+6. 保存成功后关闭弹窗并刷新列表。
+
+给 AI 的提示词：
+
+```text
+请按当前项目写法新增一个弹窗表单。
+点击“新增”打开弹窗，表单字段包括：[字段列表]。
+保存时先做必填校验，再调用 [接口名]。
+成功后关闭弹窗并刷新列表。
+请注意表单重置、loading、防重复提交和错误提示。
+```
+
+### 任务 5：接口字段变更
+
+常见需求：
+
+```text
+后端接口字段 patientId 改成 patientNo，前端需要适配。
+```
+
+处理步骤：
+
+1. 全局搜索旧字段 `patientId`。
+2. 区分“接口入参、接口出参、页面内部变量、路由参数”。
+3. 优先只改当前业务链路，不要盲目全局替换。
+4. 如果字段被公共组件使用，先确认影响范围。
+5. 修改后在 Network 中确认请求和响应字段。
+
+给 AI 的提示词：
+
+```text
+字段 patientId 需要在当前页面适配为 patientNo。
+请先搜索 patientId 的使用位置，并分类说明哪些是接口入参、哪些是页面展示、哪些可能是公共逻辑。
+不要直接全局替换，先给出影响范围和建议修改点。
+```
+
+### 任务 6：修复页面空白或控制台报错
+
+处理步骤：
+
+1. 打开浏览器 Console，复制完整错误。
+2. 点击错误堆栈里的文件路径，定位到报错行。
+3. 看 Network 是否有接口失败。
+4. 看最近修改的代码是否引入变量未定义、空值访问、组件未注册。
+5. 把错误、报错行、相关代码交给 AI。
+
+常见原因：
+
+- 变量未定义：`xxx is not defined`。
+- 空值读取属性：`Cannot read properties of undefined`。
+- 组件未注册：`Unknown custom element`。
+- 接口返回结构不符合预期。
+- 路由或菜单配置错误。
+
+给 AI 的提示词：
+
+```text
+页面打开后空白，Console 报错：
+[完整错误]
+
+报错行附近代码：
+[粘贴代码]
+
+请帮我分析最可能原因，并给出最小修改方案。
+要求不要重构页面，只修复当前错误。
+```
+
+### 任务 7：样式调整
+
+处理步骤：
+
+1. 用 Elements 面板选中页面元素。
+2. 查看真实 DOM 结构和当前生效样式。
+3. 判断是当前页面样式、组件默认样式，还是全局样式影响。
+4. 优先在当前页面 `style scoped` 中小范围调整。
+5. 不要随意改全局样式。
+
+给 AI 的提示词：
+
+```text
+当前页面 [具体位置] 样式异常：[异常描述]。
+请优先在当前页面 scoped 样式中修复，不要改全局样式。
+这是 Elements 中看到的 DOM 结构和当前样式：
+[粘贴 DOM/样式]
+```
+
+### 任务 8：新增路由或菜单页面
+
+处理步骤：
+
+1. 找相邻页面的路由配置。
+2. 复制同模块页面结构，新建页面组件。
+3. 配置路由 path、name、component。
+4. 配置菜单和权限。
+5. 启动后通过菜单和直接 URL 都测试一次。
+
+给 AI 的提示词：
+
+```text
+请参考当前模块已有页面，新增一个页面：[页面名称]。
+要求：
+1. 路由放在同模块 router 配置中。
+2. 页面文件放在同业务目录下。
+3. 菜单和权限配置参考相邻页面。
+4. 页面先实现基础列表结构，后续再接接口。
+请先告诉我需要修改哪些文件。
+```
+
+---
+
+## 常见问题定位
+
+### 1. 启动失败
+
+问题：`pnpm install` 或 `pnpm run serve` 失败。
+
+排查步骤：
+
+```bash
+node -v
+pnpm -v
+pnpm install
+pnpm run serve-outpatient
+```
+
+重点看报错中的关键词：
+
+| 关键词 | 可能原因 |
+|---|---|
+| `node-sass` | Node 版本不匹配或依赖安装失败 |
+| `Module not found` | 依赖未安装、路径错误、别名错误 |
+| `EADDRINUSE` | 端口被占用 |
+| `Unexpected token` | 语法不兼容、构建配置问题 |
+
+给 AI 的提示词：
+
+```text
+项目启动失败，命令是 pnpm run serve-outpatient。
+Node 版本：[node -v]
+pnpm 版本：[pnpm -v]
+完整报错如下：
+[粘贴报错]
+请帮我判断是环境问题、依赖问题还是代码问题，并给出处理步骤。
+```
+
+### 2. 页面空白
+
+排查顺序：
+
+1. Console 是否有红色报错。
+2. Network 是否有 JS、CSS、接口请求失败。
+3. 路由地址是否正确。
+4. 当前子应用是否启动。
+5. 最近是否修改了路由、入口文件、公共组件。
+
+### 3. 接口报错
+
+排查顺序：
+
+1. Network 中看请求 URL 是否正确。
+2. 看 Method 是否正确。
+3. 看 Request Payload / Query String 是否正确。
+4. 看 Response 的 code、message、data。
+5. 和后端接口文档或日志对照。
+
+接口问题要区分：
+
+| 现象 | 更可能的问题 |
+|---|---|
+| 404 | 路径、网关、服务名、版本号错误 |
+| 401 / 403 | 登录态、权限、token 问题 |
+| 400 | 参数格式或必填项错误 |
+| 500 | 后端异常，也可能是前端参数触发 |
+| code 非 200 | 业务校验失败，需要展示 message |
+| data 为空 | 查询条件、分页参数、后端数据问题 |
+
+### 4. 按钮点击没反应
+
+排查顺序：
+
+1. template 中 `@click` 绑定的方法名是否存在。
+2. 方法是否写在 `methods` 中。
+3. 按钮是否被 `disabled` 或权限控制隐藏。
+4. 点击后 Console 是否报错。
+5. 方法里是否有条件提前 return。
+
+### 5. 表格没数据
+
+排查顺序：
+
+1. 接口是否真的返回数据。
+2. 前端取值路径是否正确，例如 `response.data.data.records`。
+3. 表格绑定的数据变量是否正确。
+4. 查询条件是否过严。
+5. 分页字段是否传错。
+
+### 6. 样式不生效
+
+排查顺序：
+
+1. class 名是否写对。
+2. 是否使用了 `scoped`，导致选择器影响不到子组件内部。
+3. 是否被组件库样式覆盖。
+4. 是否需要使用更准确的选择器。
+5. 是否改错了页面或子组件。
+
+### 7. 修改后没有效果
+
+常见原因：
+
+- 改错子应用。
+- 开发服务没重新编译，或者浏览器缓存。
+- 页面实际使用的是子组件，不是你改的父页面。
+- 同名文件较多，改到另一个业务模块。
+- 本地访问的不是当前启动的子应用。
+
+---
+
+## 自测与验收清单
+
+### 页面自测
+
+- 页面能正常打开。
+- Console 没有新增红色报错。
+- 页面布局没有明显错位。
+- 新增字段、按钮、表单项显示位置合理。
+- 空数据时页面不报错。
+- 长文本、空值、特殊字符能正常显示。
+
+### 接口自测
+
+- Network 中请求 URL 正确。
+- Method 正确。
+- 请求参数字段名和后端约定一致。
+- 成功响应能正确渲染页面。
+- 失败响应有合理提示。
+- loading 状态能关闭。
+- 重复点击不会重复提交危险操作。
+
+### 业务自测
+
+- 查询、重置、分页、刷新都正常。
+- 新增、编辑、删除、作废等操作成功后页面会刷新。
+- 取消弹窗不会提交数据。
+- 表单校验符合需求。
+- 权限、菜单、按钮展示符合预期。
+- 涉及金额、数量、医保、收费的逻辑经过重点验证。
+
+### 让 AI 帮你做最终检查
+
+```text
+请基于当前 git diff 做一次前端代码评审。
+重点检查：
+1. 是否有变量未定义、空值访问、异步错误。
+2. 是否会影响其他页面或公共组件。
+3. 接口参数是否符合需求。
+4. 是否有重复提交、loading 不关闭、错误提示缺失的问题。
+5. 请给出我需要手动自测的场景列表。
+```
+
+---
+
+## Git 提交规范
+
+### 提交格式
+
+```text
+&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;
+
+&lt;body&gt;
+
+&lt;footer&gt;
+```
+
+### 类型
+
+| 类型 | 说明 |
+|---|---|
+| feat | 新功能 |
+| fix | 修复 bug |
+| docs | 文档更新 |
+| style | 代码格式调整，不影响逻辑 |
+| refactor | 重构代码 |
+| perf | 性能优化 |
+| test | 测试相关 |
+| chore | 构建过程或辅助工具变动 |
+
+### 示例
+
+```bash
+feat(opt-register): 新增患者快速搜索功能
+
+1. 添加患者姓名模糊搜索
+2. 添加身份证号精确搜索
+3. 优化搜索结果展示
+
+关联工作项：TaskId:12345-患者搜索优化
+```
+
+```bash
+fix(opt-charge): 修复收费金额计算错误
+
+1. 修正折扣计算逻辑
+2. 修复小数点精度问题
+
+关联工作项：BugId:67890-收费金额错误
+```
+
+### 提交前建议问 AI
+
+```text
+请根据当前 git diff 生成符合规范的提交信息。
+要求：
+1. type 从 feat/fix/docs/style/refactor/perf/test/chore 中选择。
+2. scope 使用业务模块名。
+3. subject 简洁说明本次修改。
+4. body 用列表说明关键改动。
+```
+
+---
+
+## 快速参考
+
+### 常用命令
+
+```bash
+# 安装依赖
+pnpm install
+
+# 启动门诊应用
+pnpm run serve-outpatient
+
+# 构建门诊应用
+pnpm run build:outpatient
+
+# 代码检查
+pnpm run lint
+
+# 搜索文本
+rg &quot;患者姓名&quot; packages/*/src
+
+# 搜索文件
+rg --files packages/outpatient-app/src | rg &quot;register|charge&quot;
+```
+
+### 常用路径
+
+```text
+# 页面组件
+packages/outpatient-app/src/views/his/
+
+# API 接口
+packages/outpatient-app/src/api/
+
+# 路由配置
+packages/outpatient-app/src/router/router.js
+
+# Vuex 状态
+packages/outpatient-app/src/store/
+
+# 通用组件
+packages/common-components/
+
+# 项目规范
+.cursor/rules/
+```
+
+### 前端最小知识清单
+
+后端同学不需要一次性系统学习全部前端，但建议理解这些关键词：
+
+| 知识点 | 必须知道的程度 |
+|---|---|
+| HTML | 能看懂页面结构和标签嵌套 |
+| CSS | 能看懂 class、布局、宽高、间距、颜色 |
+| JavaScript | 能看懂变量、函数、数组对象、异步 `async/await` |
+| Vue template | 能看懂 `v-if`、`v-for`、`v-model`、`@click`、`:prop` |
+| Vue data | 知道页面状态从这里来 |
+| Vue methods | 知道按钮点击、查询、保存逻辑在这里 |
+| Vue props / emit | 知道父子组件如何传值和通知 |
+| Vue Router | 知道页面路径和组件的对应关系 |
+| Vuex | 知道全局状态在哪里查 |
+| Network | 能看请求、参数、响应 |
+| Console | 能复制错误并定位报错行 |
+
+---
+
+## 学习资源
+
+### 官方文档
+
+- Vue 2 官方文档：https://v2.cn.vuejs.org/
+- Vue Router 文档：https://v3.router.vuejs.org/zh/
+- Vuex 文档：https://v3.vuex.vuejs.org/zh/
+- pnpm 文档：https://pnpm.io/zh/
+
+### 项目内文档
+
+- `.cursor/rules/`：项目规范、架构、代码约定。
+- `README.md`：项目基本说明。
+- 相邻页面代码：最实用的学习资料，优先复制同模块、同风格页面。
+
+---
+
+## 总结
+
+后端同学完成前端任务的关键，不是记住所有前端语法，而是形成稳定流程：
+
+```text
+明确需求
+  -&gt; 搜索定位
+  -&gt; 梳理数据流
+  -&gt; 给 AI 足够上下文
+  -&gt; 小步修改
+  -&gt; 用浏览器验证
+  -&gt; review diff
+  -&gt; 提交
+```
+
+遇到问题时也按固定路径排查：
+
+```text
+Console 错误
+  -&gt; Network 请求
+  -&gt; 相关代码
+  -&gt; 最近改动
+  -&gt; 交给 AI 分析
+  -&gt; 最小修复
+  -&gt; 重新自测
+```
+
+最重要的习惯：
+
+1. 不要让 AI 凭空写代码，要让它先读项目、找相似代码。
+2. 不要大范围重构，先做最小可验证修改。
+3. 不要只看页面，要同时看 Console 和 Network。
+4. 不要盲目相信 AI，接口字段、权限、金额、医保、收费逻辑必须人工确认。
+5. 不要改公共组件和全局样式，除非你已经确认影响范围。
+</textarea>
+
+  <script>
+    const mdSource = document.getElementById('courseMd').value;
+    const storageKey = 'backend-frontend-ai-course-progress-v1';
+    const meta = [
+      { title: '培训目标', desc: '先统一培训目标和学习边界', tags: ['目标', '能力', '验收'] },
+      { title: '前端心智模型', desc: '用后端概念理解 Vue 页面', tags: ['Vue', '类比', '数据流'] },
+      { title: '项目概述', desc: 'HIS 微前端项目和子应用结构', tags: ['HIS', '微前端', 'Monorepo'] },
+      { title: '环境准备', desc: 'Node、pnpm、编辑器和调试工具', tags: ['Node', 'pnpm', '工具'] },
+      { title: '项目启动', desc: '启动子应用、访问和构建命令', tags: ['启动', '构建', '命令'] },
+      { title: '核心技术栈', desc: 'Vue 2、路由、状态和组件库', tags: ['Vue 2', 'UI', '工具库'] },
+      { title: '目录结构', desc: '后端同学优先关注的文件位置', tags: ['views', 'api', 'router'] },
+      { title: '任务处理流程', desc: '拿到前端任务后的标准路径', tags: ['定位', '拆解', '自测'] },
+      { title: '大模型协作', desc: '上下文包、提示词和 AI 审查', tags: ['AI', 'Prompt', 'Review'] },
+      { title: '典型任务 SOP', desc: '列表、查询、按钮、弹窗、样式等实战', tags: ['SOP', '表格', '接口'] },
+      { title: '问题定位', desc: '启动、页面、接口、样式常见故障', tags: ['Console', 'Network', '排查'] },
+      { title: '验收与提交', desc: '自测清单、Git 规范和快速参考', tags: ['验收', 'Git', '资源'] }
+    ];
+    const groups = [
+      ['培训目标'],
+      ['后端同学的前端心智模型'],
+      ['项目概述'],
+      ['环境准备'],
+      ['项目启动'],
+      ['核心技术栈'],
+      ['目录结构'],
+      ['拿到前端任务后怎么做'],
+      ['如何让大模型帮你写前端'],
+      ['典型前端任务处理方法'],
+      ['常见问题定位'],
+      ['自测与验收清单', 'Git 提交规范', '快速参考', '学习资源', '总结']
+    ];
+
+    const parsed = parseSections(mdSource);
+    const lessons = buildLessons(parsed);
+    let progress = loadProgress();
+    const app = document.getElementById('app');
+    const nav = document.getElementById('nav');
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('backdrop');
+    const searchModal = document.getElementById('searchModal');
+    const searchInput = document.getElementById('searchInput');
+    const results = document.getElementById('results');
+
+    function parseSections(md) {
+      const lines = md.replace(/\r\n/g, '\n').split('\n');
+      const sections = [];
+      let current = null;
+      for (const line of lines) {
+        const match = line.match(/^##\s+(.+)$/);
+        if (match) {
+          if (current) sections.push(current);
+          current = { title: match[1].trim(), body: [] };
+        } else if (current) {
+          current.body.push(line);
+        }
+      }
+      if (current) sections.push(current);
+      return { sections };
+    }
+
+    function buildLessons(parsed) {
+      return groups.map((group, index) => {
+        const pieces = group.map(name => parsed.sections.find(section => section.title === name)).filter(Boolean);
+        const info = meta[index] || { title: group[0], desc: '', tags: [] };
+        const body = pieces.map(piece => `## ${piece.title}\n${piece.body.join('\n').trim()}`).join('\n\n---\n\n');
+        return { id: index, title: info.title, desc: info.desc, tags: info.tags, body };
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function inlineMd(text) {
+      let out = escapeHtml(text);
+      out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+      out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+      return out;
+    }
+
+    function slug(value) {
+      return String(value).trim().toLowerCase()
+        .replace(/[`*_~()[\]{}:：，,。/\\]+/g, '-')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'section';
+    }
+
+    function isTable(lines, i) {
+      return lines[i] && lines[i].includes('|') && lines[i + 1] && /^\s*\|?\s*:?-{3,}/.test(lines[i + 1]);
+    }
+
+    function splitRow(row) {
+      return row.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(cell => cell.trim());
+    }
+
+    function renderTable(lines, start) {
+      const rows = [];
+      let i = start;
+      while (i < lines.length && lines[i].includes('|') && lines[i].trim()) {
+        rows.push(lines[i]);
+        i++;
+      }
+      const head = splitRow(rows[0]);
+      const body = rows.slice(2).map(splitRow);
+      const html = `<table><thead><tr>${head.map(cell => `<th>${inlineMd(cell)}</th>`).join('')}</tr></thead><tbody>${body.map(row => `<tr>${row.map(cell => `<td>${inlineMd(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+      return { html, next: i };
+    }
+
+    function renderMd(md) {
+      const lines = md.replace(/\r\n/g, '\n').split('\n');
+      const out = [];
+      let i = 0;
+      while (i < lines.length) {
+        const line = lines[i].trim();
+        if (!line) { i++; continue; }
+        if (line === '---') { out.push('<hr>'); i++; continue; }
+
+        const fence = line.match(/^```(\w+)?/);
+        if (fence) {
+          const lang = fence[1] || '';
+          const code = [];
+          i++;
+          while (i < lines.length && !lines[i].trim().startsWith('```')) {
+            code.push(lines[i]);
+            i++;
+          }
+          i++;
+          out.push(`<pre><code class="language-${escapeHtml(lang)}">${escapeHtml(code.join('\n'))}</code></pre>`);
+          continue;
+        }
+
+        if (/^####\s+/.test(line)) { out.push(`<h4 id="${slug(line.replace(/^####\s+/, ''))}">${inlineMd(line.replace(/^####\s+/, ''))}</h4>`); i++; continue; }
+        if (/^###\s+/.test(line)) { out.push(`<h3 id="${slug(line.replace(/^###\s+/, ''))}">${inlineMd(line.replace(/^###\s+/, ''))}</h3>`); i++; continue; }
+        if (/^##\s+/.test(line)) { out.push(`<h2 id="${slug(line.replace(/^##\s+/, ''))}">${inlineMd(line.replace(/^##\s+/, ''))}</h2>`); i++; continue; }
+
+        if (isTable(lines, i)) {
+          const rendered = renderTable(lines, i);
+          out.push(rendered.html);
+          i = rendered.next;
+          continue;
+        }
+
+        if (/^>\s?/.test(line)) {
+          const quote = [];
+          while (i < lines.length && /^>\s?/.test(lines[i].trim())) {
+            quote.push(lines[i].trim().replace(/^>\s?/, ''));
+            i++;
+          }
+          out.push(`<blockquote>${quote.map(inlineMd).join('<br>')}</blockquote>`);
+          continue;
+        }
+
+        if (/^\d+\.\s+/.test(line)) {
+          const items = [];
+          while (i < lines.length && /^\d+\.\s+/.test(lines[i].trim())) {
+            items.push(lines[i].trim().replace(/^\d+\.\s+/, ''));
+            i++;
+          }
+          out.push(`<ol>${items.map(item => `<li>${inlineMd(item)}</li>`).join('')}</ol>`);
+          continue;
+        }
+
+        if (/^-\s+/.test(line)) {
+          const items = [];
+          while (i < lines.length && /^-\s+/.test(lines[i].trim())) {
+            items.push(lines[i].trim().replace(/^-\s+/, ''));
+            i++;
+          }
+          out.push(`<ul>${items.map(item => `<li>${inlineMd(item)}</li>`).join('')}</ul>`);
+          continue;
+        }
+
+        const paragraph = [line];
+        i++;
+        while (i < lines.length) {
+          const next = lines[i].trim();
+          if (!next || /^(```|#{2,4}\s+|---|>\s?|\d+\.\s+|-\s+)/.test(next) || isTable(lines, i)) break;
+          paragraph.push(next);
+          i++;
+        }
+        out.push(`<p>${paragraph.map(inlineMd).join(' ')}</p>`);
+      }
+      return out.join('\n');
+    }
+
+    function getRoute() {
+      const match = (location.hash || '#/overview').match(/^#\/lesson-(\d+)/);
+      if (match) return { page: 'lesson', id: Number(match[1]) };
+      return { page: 'overview' };
+    }
+
+    function loadProgress() {
+      try { return JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch { return []; }
+    }
+
+    function saveProgress() {
+      localStorage.setItem(storageKey, JSON.stringify(progress));
+      renderNav();
+    }
+
+    function done(id) { return progress.includes(id); }
+    function percent() { return Math.round((progress.length / lessons.length) * 100); }
+    function plain(md) { return md.replace(/```[\s\S]*?```/g, ' ').replace(/[#>*_`|\-]/g, ' ').replace(/\s+/g, ' ').trim(); }
+    function headings(lesson) {
+      return lesson.body.split('\n').filter(line => /^###\s+/.test(line.trim())).slice(0, 12).map(line => line.replace(/^###\s+/, '').trim());
+    }
+
+    function renderNav() {
+      const route = getRoute();
+      nav.innerHTML = [
+        `<a class="nav-link ${route.page === 'overview' ? 'active' : ''}" href="#/overview"><span class="nav-index">总</span><span><span class="nav-name">课程总览</span><span class="nav-desc">学习路径和课程目录</span></span><span></span></a>`,
+        '<div class="nav-title">课程目录</div>',
+        ...lessons.map(lesson => `
+          <a class="nav-link ${route.page === 'lesson' && route.id === lesson.id ? 'active' : ''} ${done(lesson.id) ? 'done' : ''}" href="#/lesson-${lesson.id}">
+            <span class="nav-index">${lesson.id}</span>
+            <span><span class="nav-name">${escapeHtml(lesson.title)}</span><span class="nav-desc">${escapeHtml(lesson.desc)}</span></span>
+            <span class="nav-check">${done(lesson.id) ? '✓' : ''}</span>
+          </a>`)
+      ].join('');
+    }
+
+    function lessonCard(lesson) {
+      return `<a class="lesson-card" href="#/lesson-${lesson.id}">
+        <span class="lesson-no">${lesson.id}</span>
+        <span>
+          <h3>第 ${lesson.id} 课：${escapeHtml(lesson.title)}</h3>
+          <p>${escapeHtml(lesson.desc)}</p>
+          <span class="tags">${lesson.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</span>
+        </span>
+        <span class="arrow">→</span>
+      </a>`;
+    }
+
+    function renderOverview() {
+      document.title = '后端开发者前端任务培训课程';
+      app.innerHTML = `
+        <section class="hero">
+          <div>
+            <div class="eyebrow">AI-Native Frontend Course</div>
+            <h1>后端开发者前端任务培训</h1>
+            <p>把 Markdown 培训指南整理成课程化学习路径，帮助后端同学在不了解前端细节的情况下，借助大模型完成常见前端开发、定位和自测任务。</p>
+            <div class="meta">
+              <span class="pill">${lessons.length} 节课</span>
+              <span class="pill">任务驱动</span>
+              <span class="pill">Vue 2 + HIS 项目</span>
+              <span class="pill">已完成 ${percent()}%</span>
+            </div>
+          </div>
+          <div class="visual" aria-label="课程工作流图">
+            <svg viewBox="0 0 420 300" role="img" aria-label="前端任务处理流程">
+              <rect x="18" y="24" width="384" height="252" rx="12" fill="#f4f8fa" stroke="#dce5ea"/>
+              <path d="M66 86h288M66 150h288M66 214h288" stroke="#d1dde4" stroke-width="2" stroke-dasharray="5 8"/>
+              <g font-family="Inter, sans-serif" font-size="14" font-weight="700">
+                <rect x="44" y="52" width="94" height="48" rx="8" fill="#176b87"/><text x="91" y="82" text-anchor="middle" fill="white">读需求</text>
+                <rect x="164" y="52" width="94" height="48" rx="8" fill="#fff" stroke="#b9c9d2"/><text x="211" y="82" text-anchor="middle" fill="#17212b">定位文件</text>
+                <rect x="284" y="52" width="94" height="48" rx="8" fill="#fff" stroke="#b9c9d2"/><text x="331" y="82" text-anchor="middle" fill="#17212b">梳理数据</text>
+                <rect x="44" y="124" width="94" height="48" rx="8" fill="#fff" stroke="#b9c9d2"/><text x="91" y="154" text-anchor="middle" fill="#17212b">喂给 AI</text>
+                <rect x="164" y="124" width="94" height="48" rx="8" fill="#3f8f72"/><text x="211" y="154" text-anchor="middle" fill="white">小步修改</text>
+                <rect x="284" y="124" width="94" height="48" rx="8" fill="#fff" stroke="#b9c9d2"/><text x="331" y="154" text-anchor="middle" fill="#17212b">浏览器自测</text>
+                <rect x="105" y="196" width="94" height="48" rx="8" fill="#fff" stroke="#b9c9d2"/><text x="152" y="226" text-anchor="middle" fill="#17212b">AI Review</text>
+                <rect x="225" y="196" width="94" height="48" rx="8" fill="#17212b"/><text x="272" y="226" text-anchor="middle" fill="white">提交</text>
+              </g>
+              <g stroke="#8aa1ad" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                <path d="M138 76h22"/><path d="m154 70 6 6-6 6"/><path d="M258 76h22"/><path d="m274 70 6 6-6 6"/><path d="M331 100v20"/><path d="m325 114 6 6 6-6"/><path d="M284 148h-22"/><path d="m268 142-6 6 6 6"/><path d="M164 148h-22"/><path d="m148 142-6 6 6 6"/><path d="M91 172v30h10"/><path d="m95 196 6 6-6 6"/><path d="M199 220h22"/><path d="m215 214 6 6-6 6"/>
+              </g>
+            </svg>
+          </div>
+        </section>
+        <section>
+          <h2 class="section-title">AI 辅助前端任务全景图</h2>
+          <div class="grid-4">
+            <div class="stack"><small>项目层</small><strong>微前端<br>Monorepo</strong></div>
+            <div class="stack"><small>框架层</small><strong>Vue 2<br>Vue Router / Vuex</strong></div>
+            <div class="stack"><small>组件层</small><strong>@imfe/ui<br>vxe-table</strong></div>
+            <div class="stack"><small>定位层</small><strong>rg 搜索<br>Console / Network</strong></div>
+            <div class="stack"><small>协作层</small><strong>Cursor<br>Claude Code</strong></div>
+            <div class="stack"><small>提示词层</small><strong>上下文包<br>最小修改</strong></div>
+            <div class="stack"><small>验证层</small><strong>页面自测<br>接口自测</strong></div>
+            <div class="stack"><small>提交层</small><strong>AI Review<br>Git 规范</strong></div>
+          </div>
+        </section>
+        <section>
+          <h2 class="section-title">课程目录</h2>
+          <div class="lesson-list">${lessons.map(lessonCard).join('')}</div>
+        </section>
+        <section>
+          <h2 class="section-title">五个训练原则</h2>
+          <div class="principles">
+            <div class="principle"><span class="check">✓</span><span><strong>先定位，再修改</strong><span>任何任务先搜页面文字、字段和接口。</span></span></div>
+            <div class="principle"><span class="check">✓</span><span><strong>让 AI 先分析</strong><span>先输出文件、方法、接口和风险，再动代码。</span></span></div>
+            <div class="principle"><span class="check">✓</span><span><strong>最小可验证修改</strong><span>按展示、参数、接口、提示分步骤完成。</span></span></div>
+            <div class="principle"><span class="check">✓</span><span><strong>同时看页面和数据</strong><span>页面看结果，Console 看错误，Network 看请求。</span></span></div>
+            <div class="principle"><span class="check">✓</span><span><strong>公共代码谨慎改</strong><span>common 组件、全局样式、金额医保逻辑要确认影响。</span></span></div>
+          </div>
+        </section>`;
+    }
+
+    function renderLesson(id) {
+      const lesson = lessons[id] || lessons[0];
+      const prev = lessons[id - 1];
+      const next = lessons[id + 1];
+      const hs = headings(lesson);
+      document.title = `${lesson.title} - 后端开发者前端任务培训`;
+      app.innerHTML = `
+        <div class="lesson-layout">
+          <article class="article">
+            <header class="article-head">
+              <div class="kicker">第 ${lesson.id} 课</div>
+              <h1>${escapeHtml(lesson.title)}</h1>
+              <p class="article-desc">${escapeHtml(lesson.desc)}</p>
+              <div class="tags">${lesson.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</div>
+            </header>
+            ${renderMd(lesson.body)}
+            <footer class="lesson-footer">
+              <button class="ghost-btn" type="button" onclick="location.hash='${prev ? '#/lesson-' + prev.id : '#/overview'}'">← ${prev ? '上一课' : '课程总览'}</button>
+              <button class="primary-btn" type="button" id="completeBtn">${done(lesson.id) ? '标记为未完成' : '标记本课完成'}</button>
+              <button class="ghost-btn" type="button" onclick="location.hash='${next ? '#/lesson-' + next.id : '#/overview'}'">${next ? '下一课' : '回到总览'} →</button>
+            </footer>
+          </article>
+          <aside class="tools">
+            <div class="tool-card">
+              <h3>学习进度</h3>
+              <div class="progress"><i style="width:${percent()}%"></i></div>
+              <div class="progress-text">已完成 ${progress.length} / ${lessons.length} 节，${percent()}%</div>
+            </div>
+            <div class="tool-card">
+              <h3>本课小节</h3>
+              <div class="toc">${hs.length ? hs.map(item => `<a href="#${slug(item)}">${escapeHtml(item)}</a>`).join('') : '<span class="progress-text">暂无小节</span>'}</div>
+            </div>
+          </aside>
+        </div>`;
+      document.getElementById('completeBtn').addEventListener('click', () => {
+        if (done(lesson.id)) progress = progress.filter(item => item !== lesson.id);
+        else progress.push(lesson.id);
+        saveProgress();
+        render();
+      });
+    }
+
+    function render() {
+      const route = getRoute();
+      renderNav();
+      if (route.page === 'lesson') renderLesson(route.id);
+      else renderOverview();
+      closeDrawer();
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    function openDrawer() { sidebar.classList.add('open'); backdrop.classList.add('open'); }
+    function closeDrawer() { sidebar.classList.remove('open'); if (!searchModal.classList.contains('open')) backdrop.classList.remove('open'); }
+    function openSearch() {
+      searchModal.classList.add('open');
+      backdrop.classList.add('open');
+      searchInput.value = '';
+      renderResults('');
+      setTimeout(() => searchInput.focus(), 20);
+    }
+    function closeSearch() { searchModal.classList.remove('open'); if (!sidebar.classList.contains('open')) backdrop.classList.remove('open'); }
+
+    function renderResults(query) {
+      const q = query.trim().toLowerCase();
+      const found = lessons.map(lesson => {
+        const text = `${lesson.title} ${lesson.desc} ${lesson.tags.join(' ')} ${plain(lesson.body)}`;
+        return { lesson, text };
+      }).filter(item => !q || item.text.toLowerCase().includes(q));
+      if (!found.length) {
+        results.innerHTML = '<div class="empty">没有找到匹配内容</div>';
+        return;
+      }
+      results.innerHTML = found.slice(0, 30).map(item => {
+        const source = plain(item.lesson.body);
+        const index = q ? source.toLowerCase().indexOf(q) : -1;
+        const start = index > 40 ? index - 40 : 0;
+        const snippet = index >= 0 ? source.slice(start, start + 150) : `${item.lesson.desc} · ${item.lesson.tags.join(' / ')}`;
+        return `<a class="result" href="#/lesson-${item.lesson.id}"><strong>第 ${item.lesson.id} 课：${escapeHtml(item.lesson.title)}</strong><span>${escapeHtml(snippet)}${snippet.length >= 150 ? '...' : ''}</span></a>`;
+      }).join('');
+    }
+
+    document.getElementById('menuBtn').addEventListener('click', openDrawer);
+    document.getElementById('searchBtn').addEventListener('click', openSearch);
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (confirm('确认重置所有学习进度吗？')) {
+        progress = [];
+        saveProgress();
+        render();
+      }
+    });
+    backdrop.addEventListener('click', () => { closeSearch(); closeDrawer(); });
+    searchInput.addEventListener('input', event => renderResults(event.target.value));
+    results.addEventListener('click', event => { if (event.target.closest('a')) closeSearch(); });
+    document.addEventListener('keydown', event => {
+      const key = event.key.toLowerCase();
+      if ((event.ctrlKey || event.metaKey) && key === 'k') { event.preventDefault(); openSearch(); }
+      if (event.key === 'Escape') { closeSearch(); closeDrawer(); }
+    });
+    window.addEventListener('hashchange', render);
+    render();
+  </script>
+</body>
+</html>
+
