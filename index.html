@@ -563,6 +563,18 @@ pnpm -v
 
 ## 项目启动
 
+先明确一个关键点：
+
+&gt; HIS 前端不是一个可以完全脱离环境运行的独立完整系统，它是挂载到 **base 主应用（基座应用）** 里的微前端子应用。真实调试时通常要先启动 base 主应用，再启动 HIS 项目中的某个业务子应用。
+
+推荐启动顺序：
+
+```text
+第 1 个终端：启动 base 主应用
+第 2 个终端：启动 HIS 子应用中的目标业务应用
+浏览器访问：base 主应用地址，再从菜单或路由进入 HIS 子应用页面
+```
+
 ### 1. 进入项目根目录并安装依赖
 
 ```bash
@@ -570,19 +582,40 @@ cd D:\project\medical_care\HAIC_WEB_HIS
 pnpm install
 ```
 
-### 2. 启动项目
+### 2. 先启动 base 主应用（必须）
 
-启动所有子应用：
+base 主应用负责整体门户、菜单、登录态、路由挂载、微前端容器等能力。HIS 子应用很多页面依赖 base 提供的外层环境，所以需要先让 base 跑起来。
 
 ```bash
+# 进入 base 主应用项目目录，路径按你本机实际目录调整
+cd D:\project\medical_care\HAIC_WEB_BASE
+
+# 首次运行需要安装依赖
+pnpm install
+
+# 启动 base 主应用
 pnpm run serve
 ```
 
-访问地址：`http://localhost:6066/`
+base 启动成功后，通常访问：
 
-启动单个子应用，开发时更推荐：
+```text
+http://localhost:6066/
+```
+
+注意：
+
+- 这个终端不要关闭，关闭后 HIS 子应用可能无法被主应用正常加载。
+- 如果打开页面后菜单、登录态、子应用容器异常，先确认 base 主应用是否启动成功。
+- 如果本地实际端口不是 `6066`，以 base 启动日志输出的地址为准。
+
+### 3. 再启动 HIS 中的目标子应用（推荐）
+
+base 主应用启动后，再打开第二个终端，进入 HIS 项目目录，启动你当前要开发的业务子应用。
 
 ```bash
+cd D:\project\medical_care\HAIC_WEB_HIS
+
 # 门诊应用
 pnpm run serve-outpatient
 
@@ -599,7 +632,37 @@ pnpm run serve:ims
 pnpm run serve:settings
 ```
 
-### 3. 构建项目
+开发时优先只启动当前任务涉及的一个子应用，这样启动更快、日志更清晰，也更方便定位问题。
+
+### 4. 启动完整联调环境
+
+如果你需要同时联调多个 HIS 子应用，可以在 HIS 项目中启动完整环境：
+
+```bash
+cd D:\project\medical_care\HAIC_WEB_HIS
+pnpm run serve
+```
+
+但对后端同学完成单个前端任务来说，更推荐：
+
+```text
+base 主应用 pnpm run serve
+  + HIS 单个业务子应用 pnpm run serve-xxx
+```
+
+### 5. 浏览器访问方式
+
+优先访问 base 主应用地址：
+
+```text
+http://localhost:6066/
+```
+
+然后从 base 的菜单、路由或业务入口进入 HIS 子应用页面。这样可以最大程度还原真实运行环境，包括菜单、权限、登录态、全局状态和微前端挂载行为。
+
+如果直接访问 HIS 子应用端口，只适合做局部页面调试；遇到菜单、权限、路由、全局状态相关问题时，必须回到 base 主应用中验证。
+
+### 6. 构建项目
 
 ```bash
 pnpm run build
@@ -1956,4 +2019,5 @@ Console 错误
   </script>
 </body>
 </html>
+
 
